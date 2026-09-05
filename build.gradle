@@ -11,15 +11,24 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'com.codeborne:selenide:7.2.3'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
-    testImplementation 'mysql:mysql-connector-java:8.0.33'
-    testImplementation 'commons-dbutils:commons-dbutils:1.8.1'
-    testImplementation 'org.apache.commons:commons-dbcp2:2.12.0'
-    testImplementation 'com.github.javafaker:javafaker:1.0.2'
-    testImplementation 'io.qameta.allure:allure-selenide:2.25.0'
-    testImplementation 'io.qameta.allure:allure-junit5:2.25.0'
+    // Selenide (основной фреймворк для автотестов)
+    testImplementation 'com.codeborne:selenide:6.12.4'
+
+    // JUnit 5 (для аннотаций @Test, @BeforeAll и т.д.)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+
+    // JavaFaker (для генерации тестовых данных)
+    implementation 'com.github.javafaker:javafaker:1.0.2'
+
+    // Lombok (чтобы работали @Value и не писать геттеры/сеттеры)
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+
+    // Apache Commons DBUtils (для SqlHelper и работы с БД)
+    implementation 'commons-dbutils:commons-dbutils:1.7'
+
+    // MySQL Driver (если будешь подключаться к MySQL напрямую, а не только через docker-compose)
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 }
 
 test {
