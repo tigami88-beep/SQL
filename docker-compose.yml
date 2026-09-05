@@ -1,20 +1,31 @@
 services:
-  mysql:
+  app:
+    build: .
+    ports:
+      - "9999:9999"
+    depends_on:
+      condition: service_healthy
+      service: db
+    environment:
+      DB_URL: jdbc:mysql://db:3306/app?useSSL=false&allowPublicKeyRetrieval=true
+      DB_USER: root
+      DB_PASS: root
+
+  db:
     image: mysql:8.0
-    container_name: mysql-deadline
+    container_name: app_db
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: app
-      MYSQL_USER: app
-      MYSQL_PASSWORD: pass
     volumes:
-      # Монтируем schema.sql — он выполнится при инициализации БД
-      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - db_data:/var/lib/mysql
     healthcheck:
-      # Ждём, пока MySQL будет готов, чтобы SUT не стартовал раньше времени
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "app", "-ppass" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 5
+
+volumes:
+  db_data:
