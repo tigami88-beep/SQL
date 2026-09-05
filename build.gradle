@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
 group = 'ru.netology'
@@ -10,10 +11,24 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'com.codeborne:selenide:7.2.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testImplementation 'mysql:mysql-connector-java:8.0.33'
+    testImplementation 'commons-dbutils:commons-dbutils:1.8.1'
+    testImplementation 'org.apache.commons:commons-dbcp2:2.12.0'
+    testImplementation 'com.github.javafaker:javafaker:1.0.2'
+    testImplementation 'io.qameta.allure:allure-selenide:2.25.0'
+    testImplementation 'io.qameta.allure:allure-junit5:2.25.0'
 }
 
 test {
     useJUnitPlatform()
+    systemProperty 'selenide.headless', 'true'
+    systemProperty 'selenide.timeout', '10000'
+}
+
+allure {
+    version = '2.25.0'
+    autoconfigure = true
 }
