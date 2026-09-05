@@ -2,12 +2,16 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    image: openjdk:11-jre-slim
+    container_name: app
     ports:
       - "9999:9999"
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - ./artifacts:/app
+    command: java -jar /app/app-mbank.jar
     environment:
       DB_URL: jdbc:mysql://db:3306/app?useSSL=false&allowPublicKeyRetrieval=true
       DB_USER: root
