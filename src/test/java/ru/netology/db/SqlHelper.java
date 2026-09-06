@@ -48,6 +48,16 @@ public class SqlHelper {
         }
     }
 
+    // Разблокировать пользователя по логину
+    public static void unlockUser(String login) {
+        String sql = "UPDATE users SET status = 'active' WHERE login = ?";
+        try (Connection conn = getConnection()) {
+            runner.update(conn, sql, login);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to unlock user", e);
+        }
+    }
+
     // Полная очистка БД (для полного сброса состояния)
     public static void cleanDatabase() {
         try (Connection conn = getConnection()) {

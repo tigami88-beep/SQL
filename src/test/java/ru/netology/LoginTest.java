@@ -1,4 +1,3 @@
-
 package ru.netology;
 
 import com.codeborne.selenide.Configuration;
@@ -27,6 +26,7 @@ class LoginTest {
     @AfterEach
     void tearDown() {
         SqlHelper.clearAuthCodes();
+        SqlHelper.unlockUser("vasya");
         closeWindow();
     }
 
