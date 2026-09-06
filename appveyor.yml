@@ -1,0 +1,26 @@
+image: Ubuntu
+
+services:
+  - docker
+
+environment:
+  JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
+
+build_script:
+  - chmod +x gradlew
+  - ./gradlew clean build -x test
+  - mkdir -p artifacts
+  - cp build/libs/*.jar artifacts/app-mbank.jar
+  - docker compose up -d
+  - sleep 10
+  - docker ps
+
+test_script:
+  - ./gradlew test --info
+
+on_finish:
+  - docker compose down -v
+
+artifacts:
+  - path: build/reports/tests/
+    name: test-results
