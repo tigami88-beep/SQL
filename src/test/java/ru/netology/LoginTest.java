@@ -14,14 +14,8 @@ class LoginTest {
 
     @BeforeAll
     static void setUpAll() {
-        // 1. Сначала задаём путь к драйверу — это самое важное
-        String driverPath = "C:\\Users\\Gala\\Desktop\\SQL\\msedgedriver.exe";
-        System.setProperty("webdriver.edge.driver", driverPath);
-
-        // 2. Отключаем автоскачивание драйвера (чтобы WebDriverManager не лез в сеть)
+        System.setProperty("webdriver.edge.driver", "C:\\Users\\Gala\\Desktop\\SQL\\msedgedriver.exe");
         Configuration.driverManagerEnabled = false;
-
-        // 3. Теперь настраиваем браузер
         Configuration.browser = "edge";
         Configuration.headless = false;
         Configuration.timeout = 10000;
