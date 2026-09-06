@@ -1,43 +1,36 @@
 plugins {
     id 'java'
-    id 'io.qameta.allure' version '2.11.2'
+    id 'io.qameta.allure' version '2.11.2'   // <-- это исправляет ошибку "could not find method allure()"
 }
 
-group = 'ru.netology'
-version = '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
-    // Selenide (основной фреймворк для автотестов)
+    // Lombok — обязательно для @Value и геттеров
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+
+    // Тесты
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Selenide
     testImplementation 'com.codeborne:selenide:6.12.4'
 
-    // JUnit 5 (для аннотаций @Test, @BeforeAll и т.д.)
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    // Allure (если плагин не покрывает всё)
+    testImplementation 'io.qameta.allure:allure-junit5:2.24.0'
+}
 
-    // JavaFaker (для генерации тестовых данных)
-    implementation 'com.github.javafaker:javafaker:1.0.2'
-
-    // Lombok (чтобы работали @Value и не писать геттеры/сеттеры)
-    compileOnly 'org.projectlombok:lombok:1.18.28'
-    annotationProcessor 'org.projectlombok:lombok:1.18.28'
-
-    // Apache Commons DBUtils (для SqlHelper и работы с БД)
-    implementation 'commons-dbutils:commons-dbutils:1.7'
-
-    // MySQL Driver (если будешь подключаться к MySQL напрямую, а не только через docker-compose)
-    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+allure {
+    autoconfigure = true
+    aspectjweaver = true
+    version = '2.24.0'
 }
 
 test {
     useJUnitPlatform()
-    systemProperty 'selenide.headless', 'true'
-    systemProperty 'selenide.timeout', '10000'
-}
-
-allure {
-    version = '2.25.0'
-    autoconfigure = true
+    systemProperty 'allure.results.directory', file("$buildDir/allure-results")
 }

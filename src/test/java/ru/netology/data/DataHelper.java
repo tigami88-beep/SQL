@@ -12,13 +12,13 @@ public class DataHelper {
     }
 
     @Value
-    public static class AuthInfo {
+    public class AuthInfo {
         String login;
         String password;
     }
 
     @Value
-    public static class VerificationCode {
+    public class VerificationCode {
         String code;
     }
 
