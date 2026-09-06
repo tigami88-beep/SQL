@@ -14,9 +14,11 @@ class LoginTest {
 
     @BeforeAll
     static void setUpAll() {
+        boolean isCI = System.getenv("CI") != null;
+
         Configuration.driverManagerEnabled = true;
-        Configuration.browser = "edge";
-        Configuration.headless = true;
+        Configuration.browser = isCI ? "chrome" : "edge";
+        Configuration.headless = isCI;
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 10000;
     }
