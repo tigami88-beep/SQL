@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-and-test:
@@ -17,23 +17,25 @@ jobs:
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'temurin'
+          java-version: "11"
+          distribution: "temurin"
+          cache: gradle  # включает кэширование зависимостей и кэша сборки Gradle
 
-      - name: Setup Edge WebDriver
+      # Если нужны браузерные тесты — лучше использовать headless Chrome/Firefox
+      # и не ставить Edge вручную. Selenide сам скачает драйвер.
+      # Можно задать параметры через переменные окружения:
+      - name: Configure Selenide headless
         run: |
-          sudo apt-get update
-          sudo apt-get install -y microsoft-edge-stable
+          echo "selenide.headless=true" >> $GITHUB_ENV
+          echo "selenide.browser=chrome" >> $GITHUB_ENV
 
-      - name: Build with Gradle
+      - name: Build and test
+        # build уже включает compile, test, check и т.д.
         run: ./gradlew build --no-daemon
 
-      - name: Run tests
-        run: ./gradlew test --no-daemon
-
-      - name: Upload test report
+      - name: Upload test reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-reports
-          path: build/reports/tests/test/
+          path: build/reports/tests/
