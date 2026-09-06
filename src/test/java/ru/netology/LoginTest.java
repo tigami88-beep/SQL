@@ -14,10 +14,10 @@ class LoginTest {
 
     @BeforeAll
     static void setUpAll() {
-        System.setProperty("webdriver.edge.driver", "C:\\Users\\Gala\\Desktop\\SQL\\msedgedriver.exe");
-        Configuration.driverManagerEnabled = false;
+        Configuration.driverManagerEnabled = true;
         Configuration.browser = "edge";
-        Configuration.headless = false;
+        Configuration.headless = true;
+        Configuration.browserSize = "1920x1080";
         Configuration.timeout = 10000;
     }
 
