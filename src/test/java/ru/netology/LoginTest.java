@@ -15,7 +15,6 @@ class LoginTest {
     static void setUpAll() {
         Configuration.headless = true;
         Configuration.timeout = 10000;
-        Configuration.driverManagerEnabled = false;
     }
 
     @BeforeEach
