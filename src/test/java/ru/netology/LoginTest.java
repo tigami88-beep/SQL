@@ -13,7 +13,7 @@ class LoginTest {
 
     @BeforeAll
     static void setUpAll() {
-        Configuration.headless = true;
+        Configuration.headless = false;
         Configuration.timeout = 10000;
     }
 
