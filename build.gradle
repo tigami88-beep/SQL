@@ -42,8 +42,7 @@ dependencies {
 }
 
 allure {
-    autoconfigure = true
-    version = '2.24.0'
+    autoconfigure = false
 }
 
 test {
