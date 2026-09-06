@@ -11,10 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-    # Если нужны параметры БД — задавай здесь
-    # DB_URL: "jdbc:mysql://localhost:3307/your_db"
-    # DB_USER: "root"
-    # DB_PASSWORD: "password"
+      # Переменные для тестов (если нужны)
+      DB_URL: "jdbc:mysql://localhost:3306/app"
+      DB_USER: "root"
+      DB_PASSWORD: "password"
+      SELENIDE_HEADLESS: "true"
+      SELENIDE_BROWSER: "chrome"
+
+    services:
+      # Встроенный сервис БД в GitHub Actions (альтернатива docker compose)
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: app
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -P 3306 -u root -ppassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -30,13 +47,26 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Configure Selenide headless
-        run: |
-          echo "selenide.headless=true" >> $GITHUB_ENV
-          echo "selenide.browser=chrome" >> $GITHUB_ENV
+      - name: Build (без тестов — сначала убедимся, что компилируется)
+        run: ./gradlew build -x test --no-daemon
 
-      - name: Build and test
-        run: ./gradlew build --no-daemon
+      - name: Wait for MySQL service to be ready
+        run: |
+          for i in {1..30}; do
+            if mysql -h 127.0.0.1 -P 3306 -u root -ppassword -e "SELECT 1" > /dev/null 2>&1; then
+              echo "MySQL is ready"
+              break
+            fi
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+          if [ $i -eq 30 ]; then
+            echo "MySQL did not become ready in time"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: ./gradlew test --info --no-daemon
 
       - name: Upload test reports
         uses: actions/upload-artifact@v4
@@ -44,3 +74,10 @@ jobs:
         with:
           name: test-reports
           path: build/reports/tests/
+
+      - name: Upload JAR artifact (если нужно)
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: app-jar
+          path: build/libs/*.jar
