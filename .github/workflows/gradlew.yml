@@ -11,15 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Переменные для тестов (если нужны)
-      DB_URL: "jdbc:mysql://localhost:3306/app"
+      DB_URL: "jdbc:mysql://localhost:3306/app?allowPublicKeyRetrieval=true&useSSL=false"
       DB_USER: "root"
       DB_PASSWORD: "password"
       SELENIDE_HEADLESS: "true"
-      SELENIDE_BROWSER: "edge"
+      SELENIDE_BROWSER: "chrome"
 
     services:
-      # Встроенный сервис БД в GitHub Actions (альтернатива docker compose)
       mysql:
         image: mysql:8.0
         env:
@@ -37,36 +35,44 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 11
+      # ВАЖНО: Java 17 вместо 11 — это решает проблему с peer not authenticated
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: "11"
+          java-version: "17"
           distribution: "temurin"
           cache: gradle
+
+      - name: Install Chrome and chromedriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable chromium-chromedriver
 
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build (без тестов — сначала убедимся, что компилируется)
+      - name: Build (compile only)
         run: ./gradlew build -x test --no-daemon
 
       - name: Wait for MySQL service to be ready
         run: |
-          for i in {1..30}; do
+          max_attempts=30
+          for i in $(seq 1 $max_attempts); do
             if mysql -h 127.0.0.1 -P 3306 -u root -ppassword -e "SELECT 1" > /dev/null 2>&1; then
               echo "MySQL is ready"
               break
             fi
-            echo "Waiting for MySQL..."
+            echo "Attempt $i/$max_attempts: waiting for MySQL..."
             sleep 2
           done
-          if [ $i -eq 30 ]; then
+          if [ $i -eq $max_attempts ]; then
             echo "MySQL did not become ready in time"
             exit 1
           fi
 
       - name: Run tests
-        run: ./gradlew test --info --no-daemon
+        # --stacktrace даёт понятные ошибки, если тесты упадут
+        run: ./gradlew test --stacktrace --no-daemon
 
       - name: Upload test reports
         uses: actions/upload-artifact@v4
@@ -75,7 +81,7 @@ jobs:
           name: test-reports
           path: build/reports/tests/
 
-      - name: Upload JAR artifact (если нужно)
+      - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         if: success()
         with:
