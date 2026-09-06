@@ -10,6 +10,12 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+    # Если нужны параметры БД — задавай здесь
+    # DB_URL: "jdbc:mysql://localhost:3307/your_db"
+    # DB_USER: "root"
+    # DB_PASSWORD: "password"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,8 +30,12 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
+      - name: Configure Selenide headless
+        run: |
+          echo "selenide.headless=true" >> $GITHUB_ENV
+          echo "selenide.browser=chrome" >> $GITHUB_ENV
+
       - name: Build and test
-        # build включает compile, test, check и т.д.
         run: ./gradlew build --no-daemon
 
       - name: Upload test reports
