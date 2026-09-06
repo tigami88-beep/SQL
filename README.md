@@ -1,0 +1,1 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/cie7i5e2cyy7wlwu/branch/main?svg=true)](https://ci.appveyor.com/project/tigami88-beep/sql/branch/main)
