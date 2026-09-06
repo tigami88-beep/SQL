@@ -24,7 +24,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y microsoft-edge-stable
-          # EdgeDriver установится автоматически через WebDriverManager в тесте
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
@@ -33,7 +32,7 @@ jobs:
         run: ./gradlew test --no-daemon
 
       - name: Upload test report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-reports
