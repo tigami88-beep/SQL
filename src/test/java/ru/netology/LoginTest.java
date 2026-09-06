@@ -14,7 +14,7 @@ class LoginTest {
 
     @BeforeAll
     static void setUpAll() {
-        boolean isCI = System.getenv("CI") != null;
+        boolean isCI = System.getenv("gradlew") != null;
 
         Configuration.driverManagerEnabled = true;
         Configuration.browser = isCI ? "chrome" : "edge";

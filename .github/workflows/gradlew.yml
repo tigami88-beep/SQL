@@ -1,4 +1,4 @@
-name: CI
+name: gradlew
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
       DB_USER: "root"
       DB_PASSWORD: "password"
       SELENIDE_HEADLESS: "true"
-      SELENIDE_BROWSER: "chrome"
+      SELENIDE_BROWSER: "edge"
 
     services:
       # Встроенный сервис БД в GitHub Actions (альтернатива docker compose)
