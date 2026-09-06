@@ -5,8 +5,8 @@ import org.junit.jupiter.api.*;
 import ru.netology.data.DataHelper;
 import ru.netology.db.SqlHelper;
 import ru.netology.page.LoginPage;
-
 import static com.codeborne.selenide.Selenide.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Тесты входа в систему")
 class LoginTest {
@@ -36,12 +36,12 @@ class LoginTest {
         var verificationPage = loginPage.validLogin(authInfo);
 
         String code = SqlHelper.getVerificationCode(authInfo.getLogin());
-        Assertions.assertNotNull(code, "Код верификации не найден в БД");
+        assertNotNull(code, "Код верификации не найден в БД");
 
         var verificationCode = new DataHelper.VerificationCode(code);
         var dashboardPage = verificationPage.validVerify(verificationCode);
 
-        Assertions.assertTrue(dashboardPage.isDashboardVisible(),
+        assertTrue(dashboardPage.isDashboardVisible(),
                 "Дашборд должен быть виден после успешного входа");
     }
 
@@ -74,7 +74,7 @@ class LoginTest {
         loginPage.verifyErrorMessageVisible();
 
         boolean isBlocked = SqlHelper.isUserBlocked("vasya");
-        Assertions.assertTrue(isBlocked,
+        assertTrue(isBlocked,
                 "Пользователь должен быть заблокирован после 3 неверных попыток");
     }
 }

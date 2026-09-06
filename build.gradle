@@ -1,6 +1,10 @@
 plugins {
     id 'java'
+    id 'io.qameta.allure' version '2.11.2'
 }
+
+group = 'ru.netology'
+version = '1.0-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -12,8 +16,34 @@ repositories {
 }
 
 dependencies {
+    // Lombok — ОБЯЗАТЕЛЬНО все 4 строки
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    // Selenide
+    testImplementation 'com.codeborne:selenide:6.12.4'
+
+    // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
-    // другие зависимости: selenide, allure, javafaker и т.д.
+
+    // JavaFaker
+    implementation 'com.github.javafaker:javafaker:1.0.2'
+
+    // Apache Commons DBUtils
+    implementation 'commons-dbutils:commons-dbutils:1.7'
+
+    // MySQL Driver
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+
+    // Allure
+    testImplementation 'io.qameta.allure:allure-junit5:2.24.0'
+}
+
+allure {
+    autoconfigure = true
+    version = '2.24.0'
 }
 
 test {
